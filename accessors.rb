@@ -4,10 +4,9 @@ module Accessors
   end
 
   module ClassMethods
-    SAVED_HISTORY_VAR = '@saved_history'.freeze
     def attr_accessor_with_history(*methods)
       methods.each do |method|
-        raise TypeError.new("method name is not symbol") unless method.is_a?(Symbol)
+        saved_history_var = '@saved_history'
 
         define_method(method) { instance_variable_get("@#{method}") }
         
@@ -16,14 +15,14 @@ module Accessors
 
           instance_variable_set("@#{method}", value)
 
-          instance_variable_set(SAVED_HISTORY_VAR, {}) unless instance_variable_defined?(SAVED_HISTORY_VAR)
-          saved_history = instance_variable_get(SAVED_HISTORY_VAR)
+          instance_variable_set(saved_history_var, {}) unless instance_variable_defined?(saved_history_var)
+          saved_history = instance_variable_get(saved_history_var)
           saved_history[method] = [] unless saved_history[method].is_a?(Array)
           saved_history[method] << prev_value
-          instance_variable_set(SAVED_HISTORY_VAR, saved_history)
+          instance_variable_set(saved_history_var, saved_history)
         end
 
-        define_method("#{method}_history") { instance_variable_get(SAVED_HISTORY_VAR)[method] }
+        define_method("#{method}_history") { instance_variable_get(saved_history_var)[method] }
       end
     end
 
