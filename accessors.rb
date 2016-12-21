@@ -17,7 +17,7 @@ module Accessors
 
           instance_variable_set(saved_history_var, {}) unless instance_variable_defined?(saved_history_var)
           saved_history = instance_variable_get(saved_history_var)
-          saved_history[method] = [] unless saved_history[method].is_a?(Array)
+          saved_history[method] ||= []
           saved_history[method] << prev_value
           instance_variable_set(saved_history_var, saved_history)
         end
